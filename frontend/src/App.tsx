@@ -63,7 +63,7 @@ function SealLogo() {
       >
         <LockIcon className="w-8 h-8 text-[#00ADB5]" />
       </motion.div>
-      <span className="font-bold text-2xl text-[#EEEEEE]">SealVault</span>
+      <span className="font-bold text-2xl text-[#EEEEEE]">SuiVault</span>
     </motion.div>
   );
 }
@@ -643,11 +643,11 @@ function App() {
                           animate="visible"
                         >
                           <motion.div variants={staggerItem}>
-                            <CardTitle className="text-[#EEEEEE]">SealVault Assistant</CardTitle>
+                            <CardTitle className="text-[#EEEEEE]">SuiVault Assistant</CardTitle>
                           </motion.div>
                           <motion.div variants={staggerItem}>
                             <CardDescription className="text-[#EEEEEE]/70">
-                              Get help with SealVault features, security, and best practices.
+                              Get help with SuiVault features, security, and best practices.
                             </CardDescription>
                           </motion.div>
                         </motion.div>

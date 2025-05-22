@@ -14,12 +14,12 @@ genai.configure(api_key=GEMINI_API_KEY)
 # Initialize the model
 model = genai.GenerativeModel('gemini-1.5-flash-latest')
 
-def get_sealvault_response(user_prompt):
+def get_suivault_response(user_prompt):
     """Get response from Gemini with enterprise document management context"""
-    system_prompt = """You are SealVault's enterprise assistant, focused on providing clear, concise guidance for document management and security. Keep responses direct and actionable.
+    system_prompt = """You are SuiVault's enterprise assistant, focused on providing clear, concise guidance for document management and security. Keep responses direct and actionable.
 
     Platform Overview:
-    SealVault is a decentralized enterprise document management platform built on Sui blockchain that enables:
+    SuiVault is a decentralized enterprise document management platform built on Sui blockchain that enables:
     - Secure storage of sensitive documents (contracts, HR records, compliance docs)
     - Blockchain-based access control and audit trails
     - End-to-end encryption for all documents
@@ -63,7 +63,7 @@ def get_sealvault_response(user_prompt):
         return response.text
     except Exception as e:
         print(f"Gemini API error: {e}")
-        return "I'm having trouble connecting to the SealVault knowledge base right now. Please try again in a moment!"
+        return "I'm having trouble connecting to the SuiVault knowledge base right now. Please try again in a moment!"
 
 @app.route('/health', methods=['GET'])
 def health_check():
@@ -90,7 +90,7 @@ def prompt():
             return jsonify({"error": "Prompt is required"}), 400
         
         # Get response from Gemini
-        ai_response = get_sealvault_response(user_prompt)
+        ai_response = get_suivault_response(user_prompt)
         
         print("Sending Gemini response back to frontend")
         return jsonify({

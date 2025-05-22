@@ -28,7 +28,7 @@ const suggestions: Suggestion[] = [
   {
     icon: <ShieldIcon className="w-5 h-5" />,
     text: "Document Security",
-    prompt: "How does SealVault ensure the security of enterprise documents?",
+    prompt: "How does SuiVault ensure the security of enterprise documents?",
     color: "hsl(var(--primary))",
   },
   {
@@ -46,13 +46,13 @@ const suggestions: Suggestion[] = [
   {
     icon: <LockIcon className="w-5 h-5" />,
     text: "Compliance",
-    prompt: "How does SealVault help with regulatory compliance for document storage?",
+    prompt: "How does SuiVault help with regulatory compliance for document storage?",
     color: "hsl(var(--primary))",
   },
   {
     icon: <AlertCircleIcon className="w-5 h-5" />,
     text: "Getting Started",
-    prompt: "What are the first steps to start using SealVault for enterprise document management?",
+    prompt: "What are the first steps to start using SuiVault for enterprise document management?",
     color: "hsl(var(--primary))",
   },
 ];
@@ -228,7 +228,7 @@ export function Chat() {
                   (new Date().getTime() - new Date(messages[0].timestamp).getTime()) / 1000 / 60
                 )} minutes`
               : "0 minutes",
-          platform: "SealVault",
+          platform: "SuiVault",
           version: "1.0.0"
         },
       };
@@ -248,14 +248,14 @@ export function Chat() {
       const jsonUrl = URL.createObjectURL(jsonBlob);
       const jsonLink = document.createElement("a");
       jsonLink.href = jsonUrl;
-      jsonLink.download = `sealvault-conversation-${new Date().toISOString().slice(0, 10)}.json`;
+      jsonLink.download = `suivault-conversation-${new Date().toISOString().slice(0, 10)}.json`;
 
       // Save as TXT
       const txtBlob = new Blob([formattedText], { type: "text/plain" });
       const txtUrl = URL.createObjectURL(txtBlob);
       const txtLink = document.createElement("a");
       txtLink.href = txtUrl;
-      txtLink.download = `sealvault-conversation-${new Date().toISOString().slice(0, 10)}.txt`;
+      txtLink.download = `suivault-conversation-${new Date().toISOString().slice(0, 10)}.txt`;
 
       setSavedStatus("Saving...");
       
@@ -352,7 +352,7 @@ export function Chat() {
         .join("\n---\n\n");
 
       const shareData = {
-        title: "SealVault Conversation",
+        title: "SuiVault Conversation",
         text: formattedText,
         url: window.location.href
       };
@@ -476,7 +476,7 @@ export function Chat() {
             <motion.div variants={staggerItem}>
               <CardTitle className="flex items-center gap-2 text-2xl bg-gradient-to-r from-[#00ADB5] to-[#00ADB5]/60 bg-clip-text text-transparent">
                 <LockIcon className="w-6 h-6 text-[#00ADB5]" />
-                SealVault
+                SuiVault
                 <motion.div
                   variants={loadingAnimation}
                   animate="animate"
@@ -544,7 +544,7 @@ export function Chat() {
                 >
                   <motion.div variants={staggerItem}>
                     <h2 className="text-2xl font-semibold mb-2 bg-gradient-to-r from-[#00ADB5] to-[#00ADB5]/60 bg-clip-text text-transparent">
-                      Welcome to SealVault
+                      Welcome to SuiVault
                     </h2>
                   </motion.div>
                   <motion.div variants={staggerItem}>
@@ -666,7 +666,7 @@ export function Chat() {
                 value={prompt}
                 onChange={(e) => setPrompt(e.target.value)}
                 onKeyDown={handleKeyDown}
-                placeholder="Ask about SealVault features..."
+                placeholder="Ask about SuiVault features..."
                 className="flex-1 bg-[#222831]/50 backdrop-blur-sm border-[#393E46] focus:border-[#00ADB5] focus:ring-1 focus:ring-[#00ADB5]/20 text-[#EEEEEE] placeholder-[#EEEEEE]/50"
                 disabled={connectionStatus === 'disconnected' || isTyping}
               />
