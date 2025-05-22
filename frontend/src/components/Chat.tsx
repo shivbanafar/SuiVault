@@ -58,7 +58,7 @@ const suggestions: Suggestion[] = [
 ];
 
 // API configuration - Flask is running on 127.0.0.1:5000
-const API_BASE_URL = "http://127.0.0.1:5000";
+const API_BASE_URL = "https://suivault.onrender.com";
 
 // Add this CSS animation at the top of the file, after imports
 const messageStyles = {
