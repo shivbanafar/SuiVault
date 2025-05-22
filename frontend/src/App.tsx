@@ -24,6 +24,7 @@ import {
   Layers3Icon,
   EyeIcon,
   MessageCircle,
+  InfoIcon,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -47,6 +48,7 @@ import { AllServices } from "./OwnedSubscriptionServices";
 import Feeds from "./AllowlistView";
 import { Chat } from "@/components/Chat";
 import { pageTransition, cardHover, staggerContainer, staggerItem, fadeIn, iconHover, buttonHover, arrowHover, navItemAnimation, logoAnimation, fileTypeCardAnimation } from "@/lib/animations";
+import { About } from "./About";
 
 function SealLogo() {
   return (
@@ -100,6 +102,8 @@ function NavBar() {
       setActiveTab("subscription");
     } else if (location.pathname.includes("chat")) {
       setActiveTab("chat");
+    } else if (location.pathname.includes("about")) {
+      setActiveTab("about");
     } else {
       setActiveTab("home");
     }
@@ -120,7 +124,8 @@ function NavBar() {
               { path: "/", icon: HomeIcon, label: "Home" },
               { path: "/allowlist-example", icon: ShieldIcon, label: "Allowlist" },
               { path: "/subscription-example", icon: CreditCardIcon, label: "Subscription" },
-              { path: "/chat", icon: MessageCircle, label: "Assistant" }
+              { path: "/chat", icon: MessageCircle, label: "Assistant" },
+              { path: "/about", icon: InfoIcon, label: "About" }
             ].map((item) => (
               <motion.div
                 key={item.path}
@@ -626,6 +631,16 @@ function App() {
                     exit="exit"
                   >
                     <LandingPage />
+                  </motion.div>
+                } />
+                <Route path="/about" element={
+                  <motion.div
+                    variants={pageTransition}
+                    initial="hidden"
+                    animate="visible"
+                    exit="exit"
+                  >
+                    <About />
                   </motion.div>
                 } />
                 <Route path="/chat" element={

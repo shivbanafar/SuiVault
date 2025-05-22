@@ -24,12 +24,15 @@ import {
   UsersIcon,
   PlusIcon,
   Layers3Icon,
-  X
+  X,
+  Users,
+  CreditCard
 } from 'lucide-react';
 import { Spinner } from '@radix-ui/themes';
 import { set, get } from 'idb-keyval';
 import { useParams } from 'react-router-dom';
 import { getObjectExplorerLink, downloadAndDecrypt, MoveCallConstructor } from './utils';
+import { Link } from 'react-router-dom';
 
 // File type interfaces
 interface FileData {
@@ -51,15 +54,6 @@ interface AccessOption {
   id: string;
   name: string;
   description: string;
-  icon: React.ReactNode;
-}
-
-interface SubscriptionPlan {
-  id: string;
-  name: string;
-  price: string;
-  description: string;
-  features: string[];
   icon: React.ReactNode;
 }
 
@@ -131,6 +125,21 @@ const FILE_TYPE_ICONS = {
   other: <FileTypeIcon className="w-8 h-8 text-[#00ADB5]" />,
 } as const;
 
+const accessOptions: AccessOption[] = [
+  {
+    id: 'allowlist',
+    name: 'Allowlist Access',
+    description: 'Grant access to specific addresses',
+    icon: <Users className="h-6 w-6" />,
+  },
+  {
+    id: 'subscription',
+    name: 'Subscription Service',
+    description: 'Create a subscription service for access',
+    icon: <CreditCard className="h-6 w-6" />,
+  },
+];
+
 const WalrusUpload: React.FC<WalrusUploadProps> = ({ policyObject, cap_id, moduleName, setRecipientAllowlist, setCapId, suiAddress }) => {
   // States
   const [fileData, setFileData] = useState<FileData | null>(null);
@@ -143,7 +152,6 @@ const WalrusUpload: React.FC<WalrusUploadProps> = ({ policyObject, cap_id, modul
   });
   const [currentStep, setCurrentStep] = useState<'upload' | 'access' | 'confirmation'>('upload');
   const [selectedAccess, setSelectedAccess] = useState<string | null>(null);
-  const [selectedSubscription, setSelectedSubscription] = useState<string | null>(null);
   const [recipients, setRecipients] = useState<string[]>([]);
   const [newRecipient, setNewRecipient] = useState<string>('');
   const [viewMode, setViewMode] = useState<boolean>(false);
@@ -177,42 +185,6 @@ const WalrusUpload: React.FC<WalrusUploadProps> = ({ policyObject, cap_id, modul
   });
 
   const { mutate: signPersonalMessage } = useSignPersonalMessage();
-
-  // Access options
-  const accessOptions: AccessOption[] = [
-    {
-      id: 'allowlist',
-      name: 'Allowlist',
-      description: 'Grant access to specific users by their wallet addresses',
-      icon: <ShieldIcon className="w-6 h-6 text-[#00ADB5]" />
-    },
-    {
-      id: 'subscription',
-      name: 'Subscription',
-      description: 'Users pay a fee to access your content for a specific time period',
-      icon: <CreditCardIcon className="w-6 h-6 text-[#00ADB5]" />
-    }
-  ];
-
-  // Subscription plans
-  const subscriptionPlans: SubscriptionPlan[] = [
-    {
-      id: 'basic',
-      name: 'Basic Access',
-      price: '5 SUI',
-      description: 'Access for 7 days',
-      features: ['File viewing', 'Download access', '7-day access period'],
-      icon: <CreditCardIcon className="w-6 h-6 text-[#00ADB5]" />
-    },
-    {
-      id: 'premium',
-      name: 'Premium Access',
-      price: '20 SUI',
-      description: 'Access for 30 days',
-      features: ['File viewing', 'Download access', 'Editing capabilities', '30-day access period'],
-      icon: <CreditCardIcon className="w-6 h-6 text-[#00ADB5]" />
-    }
-  ];
 
   // Get file type icon
   const getFileTypeIcon = (type: FileData['type']) => {
@@ -496,15 +468,11 @@ const WalrusUpload: React.FC<WalrusUploadProps> = ({ policyObject, cap_id, modul
   // Handle access selection
   const handleAccessSelection = (accessId: string) => {
     setSelectedAccess(accessId);
-    if (accessId === 'subscription') {
-      // Default to basic subscription
-      setSelectedSubscription('basic');
-    }
   };
 
   // Handle subscription selection
   const handleSubscriptionSelection = (planId: string) => {
-    setSelectedSubscription(planId);
+    // This function is no longer used in the component
   };
 
   // Function to truncate wallet address
@@ -956,7 +924,7 @@ const WalrusUpload: React.FC<WalrusUploadProps> = ({ policyObject, cap_id, modul
           ) : (
             <>
               <LockIcon className="w-5 h-5" />
-              First Step: Encrypt and Upload
+              Encrypt and Upload
             </>
           )}
         </button>
@@ -1075,38 +1043,20 @@ const WalrusUpload: React.FC<WalrusUploadProps> = ({ policyObject, cap_id, modul
         <div className="space-y-4">
           <div className="flex items-center gap-2">
             <CreditCardIcon className="w-5 h-5 text-[#00ADB5]" />
-            <h4 className="text-[#EEEEEE] font-medium">Select Subscription Plan</h4>
+            <h4 className="text-[#EEEEEE] font-medium">Create Subscription Service</h4>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {subscriptionPlans.map((plan) => (
-              <div 
-                key={plan.id}
-                className={`p-4 rounded-lg border cursor-pointer transition-all ${
-                  selectedSubscription === plan.id 
-                    ? 'border-[#00ADB5] bg-[#00ADB5]/10'
-                    : 'border-[#393E46] bg-[#222831] hover:border-[#00ADB5]/50'
-                }`}
-                onClick={() => handleSubscriptionSelection(plan.id)}
-              >
-                <div className="flex items-start gap-3">
-                    {plan.icon}
-                  <div>
-                    <h4 className="text-[#EEEEEE] font-medium">{plan.name}</h4>
-                    <p className="text-[#00ADB5] font-medium mt-1">{plan.price}</p>
-                    <p className="text-[#EEEEEE]/70 text-sm mt-1">{plan.description}</p>
-                    <ul className="mt-3 space-y-2">
-                  {plan.features.map((feature, index) => (
-                        <li key={index} className="flex items-center gap-2 text-sm text-[#EEEEEE]/70">
-                          <CheckCircleIcon className="w-4 h-4 text-[#00ADB5]" />
-                      {feature}
-                    </li>
-                  ))}
-                </ul>
-                  </div>
-                </div>
-              </div>
-            ))}
+          <div className="bg-[#222831]/50 backdrop-blur-sm rounded-xl p-6 border border-[#393E46]">
+            <p className="text-[#EEEEEE]/70 mb-4">
+              To enable subscription-based access, you need to create a subscription service first. This will allow you to set pricing and duration for access to your content.
+            </p>
+            <Link 
+              to="/subscription-example"
+              className="inline-flex items-center gap-2 bg-[#00ADB5] text-[#222831] px-4 py-2 rounded-lg hover:bg-[#00ADB5]/80 transition-colors"
+            >
+              <CreditCardIcon className="w-5 h-5" />
+              Create Subscription Service
+            </Link>
           </div>
         </div>
       )}
