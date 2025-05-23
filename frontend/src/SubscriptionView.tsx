@@ -14,6 +14,7 @@ import { fromHex, SUI_CLOCK_OBJECT_ID } from '@mysten/sui/utils';
 import { SealClient, SessionKey, getAllowlistedKeyServers } from '@mysten/seal';
 import { useParams } from 'react-router-dom';
 import { downloadAndDecrypt, getObjectExplorerLink, MoveCallConstructor } from './utils';
+import { LockIcon, CreditCardIcon } from 'lucide-react';
 
 const TTL_MIN = 10;
 export interface FeedData {
@@ -272,11 +273,16 @@ const FeedsToSubscribe: React.FC<{ suiAddress: string }> = ({ suiAddress }) => {
                       onClick={() =>
                         onView(feed!.blobIds, feed!.id, Number(feed!.fee), feed!.subscriptionId)
                       }
+                      className="w-full bg-[#00ADB5] text-[#222831] py-4 px-6 rounded-xl hover:bg-[#00ADB5]/90 transition-all duration-300 flex items-center justify-center gap-3 font-medium text-base shadow-lg shadow-[#00ADB5]/10"
                     >
                       {feed!.subscriptionId ? (
-                        <div>Download And Decrypt All Files</div>
+                        <div className="flex items-center gap-2">
+                          <LockIcon className="w-5 h-5 stroke-[1.75]" />
+                          Download And Decrypt All Files
+                        </div>
                       ) : (
-                        <div>
+                        <div className="flex items-center gap-2">
+                          <CreditCardIcon className="w-5 h-5 stroke-[1.75]" />
                           Subscribe for {feed!.fee} MIST for{' '}
                           {Math.floor(parseInt(feed!.ttl) / 60 / 1000)} minutes
                         </div>

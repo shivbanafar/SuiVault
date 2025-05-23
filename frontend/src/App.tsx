@@ -168,12 +168,12 @@ function NavBar() {
                     }`}
                   >
                     <item.icon
-                      className={`w-5 h-5 sm:w-6 sm:h-6 mr-2.5 stroke-[1.75] ${
+                      className={`w-5 h-5 sm:w-6 sm:h-6 mr-3.5 sm:mr-4 stroke-[1.75] ${
                         activeTab === item.label.toLowerCase()
-                          ? "text-[#00ADB5] stroke-[#00ADB5] scale-110"
+                          ? "text-[#00ADB5] stroke-[#00ADB5] fill-[#00ADB5]/20 scale-110"
                           : "text-[#EEEEEE] stroke-current group-hover:text-[#00ADB5] group-hover:stroke-[#00ADB5] group-hover:scale-105"
                       } transition-all duration-200`}
-                      fill="none"
+                      fill={activeTab === item.label.toLowerCase() ? "currentColor" : "none"}
                     />
                   </motion.div>
                   <span>{item.label}</span>

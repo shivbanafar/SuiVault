@@ -10,6 +10,7 @@ import { getAllowlistedKeyServers, SealClient, SessionKey, type SessionKeyType }
 import { useParams } from 'react-router-dom';
 import { downloadAndDecrypt, getObjectExplorerLink, MoveCallConstructor } from './utils';
 import { set, get } from 'idb-keyval';
+import { LockIcon } from 'lucide-react';
 
 const TTL_MIN = 10;
 export interface FeedData {
@@ -164,8 +165,14 @@ const Feeds: React.FC<{ suiAddress: string }> = ({ suiAddress }) => {
               ) : (
                 <Dialog.Root open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                   <Dialog.Trigger>
-                    <Button onClick={() => onView(feed!.blobIds, feed!.allowlistId)}>
-                      Download And Decrypt All Files
+                    <Button 
+                      onClick={() => onView(feed!.blobIds, feed!.allowlistId)}
+                      className="w-full bg-[#00ADB5] text-[#222831] py-4 px-6 rounded-xl hover:bg-[#00ADB5]/90 transition-all duration-300 flex items-center justify-center gap-3 font-medium text-base shadow-lg shadow-[#00ADB5]/10"
+                    >
+                      <div className="flex items-center gap-2">
+                        <LockIcon className="w-5 h-5 stroke-[1.75]" />
+                        Download And Decrypt All Files
+                      </div>
                     </Button>
                   </Dialog.Trigger>
                   {decryptedFileUrls.length > 0 && (
