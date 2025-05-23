@@ -111,15 +111,15 @@ function NavBar() {
 
   return (
     <div className="bg-[#222831] border-b border-[#393E46] sticky top-0 z-50">
-      <div className="max-w-6xl mx-auto px-6">
-        <div className="flex items-center h-20">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6">
+        <div className="flex flex-col sm:flex-row items-center h-auto sm:h-20 py-4 sm:py-0">
           {/* Logo on extreme left */}
-          <div className="flex-shrink-0 mr-12">
+          <div className="flex-shrink-0 mb-4 sm:mb-0 sm:mr-12">
             <SealLogo />
           </div>
           
           {/* Navigation tabs in center */}
-          <nav className="flex flex-1 items-center justify-center space-x-2">
+          <nav className="flex flex-wrap sm:flex-nowrap justify-center sm:flex-1 items-center gap-2 sm:space-x-2 w-full sm:w-auto">
             {[
               { path: "/", icon: HomeIcon, label: "Home" },
               { path: "/allowlist-example", icon: ShieldIcon, label: "Allowlist" },
@@ -133,11 +133,12 @@ function NavBar() {
                 initial="initial"
                 whileHover="hover"
                 whileTap="tap"
+                className="w-full sm:w-auto"
               >
                 <Button
                   variant="ghost"
                   onClick={() => navigate(item.path)}
-                  className={`flex items-center px-6 py-2 rounded-none border-b-2 transition-all duration-300 h-20 text-base ${
+                  className={`flex items-center px-4 sm:px-6 py-2 rounded-lg sm:rounded-none border-b-2 transition-all duration-300 h-auto sm:h-20 text-sm sm:text-base w-full sm:w-auto ${
                     activeTab === item.label.toLowerCase()
                       ? "font-bold border-[#00ADB5] text-[#00ADB5] bg-[#393E46]"
                       : "font-normal border-transparent text-[#EEEEEE] hover:text-[#00ADB5] hover:bg-[#393E46]/50"
@@ -148,7 +149,7 @@ function NavBar() {
                     whileHover="hover"
                   >
                     <item.icon
-                      className={`w-5 h-5 mr-2 transition-colors duration-300 ${
+                      className={`w-4 h-4 sm:w-5 sm:h-5 mr-2 transition-colors duration-300 ${
                         activeTab === item.label.toLowerCase()
                           ? "fill-[#00ADB5] stroke-[#00ADB5]"
                           : "stroke-[#EEEEEE]"
@@ -163,14 +164,15 @@ function NavBar() {
           </nav>
 
           {/* ConnectButton on extreme right */}
-          <div className="flex-shrink-0 ml-12">
+          <div className="flex-shrink-0 mt-4 sm:mt-0 sm:ml-12 w-full sm:w-auto">
             <motion.div
               variants={buttonHover}
               initial="initial"
               whileHover="hover"
               whileTap="tap"
+              className="w-full sm:w-auto"
             >
-              <ConnectButton />
+              <ConnectButton className="w-full sm:w-auto" />
             </motion.div>
           </div>
         </div>
@@ -303,7 +305,7 @@ function LandingPage() {
       initial="hidden"
       animate="visible"
       exit="exit"
-      className="space-y-8"
+      className="space-y-6 sm:space-y-8"
     >
       {/* Hero Section */}
       <motion.div
@@ -312,19 +314,19 @@ function LandingPage() {
         animate="visible"
       >
         <Card className="bg-gradient-to-r from-[#00ADB5]/10 to-[#00ADB5]/20 border-[#393E46]">
-          <CardHeader className="pb-6">
+          <CardHeader className="pb-4 sm:pb-6">
             <motion.div
               variants={staggerContainer}
               initial="hidden"
               animate="visible"
             >
               <motion.div variants={staggerItem}>
-                <CardTitle className="text-3xl md:text-4xl text-[#EEEEEE]">
+                <CardTitle className="text-2xl sm:text-3xl md:text-4xl text-[#EEEEEE]">
                   Secure File Sharing with Blockchain Protection
                 </CardTitle>
               </motion.div>
               <motion.div variants={staggerItem}>
-                <CardDescription className="text-lg text-[#EEEEEE]/70 mt-3">
+                <CardDescription className="text-base sm:text-lg text-[#EEEEEE]/70 mt-2 sm:mt-3">
                   Upload, encrypt, and share your files with granular access control
                   using SUI blockchain technology. Choose between allowlist-based or
                   subscription-based sharing models.
@@ -332,21 +334,21 @@ function LandingPage() {
               </motion.div>
             </motion.div>
           </CardHeader>
-          <CardContent className="pb-6">
+          <CardContent className="pb-4 sm:pb-6">
             <motion.div 
-              className="flex flex-wrap gap-4"
+              className="flex flex-col sm:flex-row gap-4"
               variants={staggerContainer}
               initial="hidden"
               animate="visible"
             >
-              <motion.div variants={staggerItem}>
-                <Link to="/allowlist-example">
+              <motion.div variants={staggerItem} className="w-full sm:w-auto">
+                <Link to="/allowlist-example" className="w-full sm:w-auto block">
                   <motion.div 
                     whileHover={{ scale: 1.05, y: -2 }} 
                     whileTap={{ scale: 0.95 }}
-                    className="inline-block"
+                    className="w-full sm:w-auto"
                   >
-                    <Button size="lg" className="flex items-center gap-2 bg-[#00ADB5] hover:bg-[#00ADB5]/80 text-[#222831] group">
+                    <Button size="lg" className="w-full sm:w-auto flex items-center justify-center gap-2 bg-[#00ADB5] hover:bg-[#00ADB5]/80 text-[#222831] group">
                       <motion.div
                         whileHover={{ scale: 1.1, rotate: 5 }}
                         transition={{ duration: 0.2 }}
@@ -375,17 +377,17 @@ function LandingPage() {
                   </motion.div>
                 </Link>
               </motion.div>
-              <motion.div variants={staggerItem}>
-                <Link to="/subscription-example">
+              <motion.div variants={staggerItem} className="w-full sm:w-auto">
+                <Link to="/subscription-example" className="w-full sm:w-auto block">
                   <motion.div 
                     whileHover={{ scale: 1.05, y: -2 }} 
                     whileTap={{ scale: 0.95 }}
-                    className="inline-block"
+                    className="w-full sm:w-auto"
                   >
                     <Button
                       size="lg"
                       variant="outline"
-                      className="flex items-center gap-2 border-[#00ADB5] text-[#00ADB5] hover:bg-[#00ADB5] hover:text-[#222831] group"
+                      className="w-full sm:w-auto flex items-center justify-center gap-2 border-[#00ADB5] text-[#00ADB5] hover:bg-[#00ADB5] hover:text-[#222831] group"
                     >
                       <motion.div
                         whileHover={{ scale: 1.1, rotate: 5 }}
@@ -422,36 +424,23 @@ function LandingPage() {
 
       {/* File Type Support Section */}
       <Card className="border-[#393E46] bg-[#222831]/80">
-        <CardHeader className="pb-6">
+        <CardHeader className="pb-4 sm:pb-6">
           <div className="flex items-center gap-3">
             <div className="bg-[#00ADB5]/10 p-2 rounded-lg">
-              <FileTextIcon className="w-5 h-5 text-[#00ADB5]" />
+              <FileTextIcon className="w-4 h-4 sm:w-5 sm:h-5 text-[#00ADB5]" />
             </div>
-            <CardTitle className="text-[#EEEEEE]">Supported File Types</CardTitle>
+            <CardTitle className="text-base sm:text-lg text-[#EEEEEE]">Supported File Types</CardTitle>
           </div>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <div className="bg-[#222831] text-[#EEEEEE] p-4 rounded-lg border border-[#393E46] flex items-center gap-3">
-              <FileIcon className="w-5 h-5 text-[#00ADB5]" />
-              <span>Images</span>
-              <CheckCircleIcon className="w-4 h-4 text-[#00ADB5] ml-auto" />
-            </div>
-            <div className="bg-[#222831] p-4 text-[#EEEEEE] rounded-lg border border-[#393E46] flex items-center gap-3">
-              <FileIcon className="w-5 h-5 text-[#00ADB5]" />
-              <span>PDFs</span>
-              <CheckCircleIcon className="w-4 h-4 text-[#00ADB5] ml-auto" />
-            </div>
-            <div className="bg-[#222831] p-4 rounded-lg border border-[#393E46] flex items-center gap-3 text-[#EEEEEE]">
-              <FileIcon className="w-5 h-5 text-[#00ADB5]" />
-              <span>Excel</span>
-              <CheckCircleIcon className="w-4 h-4 text-[#00ADB5] ml-auto" />
-            </div>
-            <div className="bg-[#222831] p-4 rounded-lg border border-[#393E46] flex items-center gap-3 text-[#EEEEEE]">
-              <FileIcon className="w-5 h-5 text-[#00ADB5]" />
-              <span>Word</span>
-              <CheckCircleIcon className="w-4 h-4 text-[#00ADB5] ml-auto" />
-            </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
+            {['Images', 'PDFs', 'Excel', 'Word'].map((type) => (
+              <div key={type} className="bg-[#222831] text-[#EEEEEE] p-3 sm:p-4 rounded-lg border border-[#393E46] flex items-center gap-3">
+                <FileIcon className="w-4 h-4 sm:w-5 sm:h-5 text-[#00ADB5]" />
+                <span className="text-sm sm:text-base">{type}</span>
+                <CheckCircleIcon className="w-3 h-3 sm:w-4 sm:h-4 text-[#00ADB5] ml-auto" />
+              </div>
+            ))}
           </div>
         </CardContent>
       </Card>
@@ -535,16 +524,16 @@ function LandingPage() {
 
       {/* Important Information Section */}
       <Card className="border-[#393E46] bg-[#393E46]/50 backdrop-blur-sm">
-        <CardHeader className="pb-6">
+        <CardHeader className="pb-4 sm:pb-6">
           <div className="flex items-center gap-3">
-            <div className="bg-[#00ADB5]/20 p-2.5 rounded-lg">
-              <AlertCircleIcon className="w-5 h-5 text-[#00ADB5]" />
+            <div className="bg-[#00ADB5]/20 p-2 sm:p-2.5 rounded-lg">
+              <AlertCircleIcon className="w-4 h-4 sm:w-5 sm:h-5 text-[#00ADB5]" />
             </div>
-            <CardTitle className="text-[#EEEEEE]">Important Information</CardTitle>
+            <CardTitle className="text-base sm:text-lg text-[#EEEEEE]">Important Information</CardTitle>
           </div>
         </CardHeader>
-        <CardContent className="space-y-4">
-          <ul className="space-y-4">
+        <CardContent className="space-y-3 sm:space-y-4">
+          <ul className="space-y-3 sm:space-y-4">
             <li className="flex items-start gap-3">
               <div className="bg-[#00ADB5]/20 text-[#00ADB5] w-7 h-7 rounded-lg flex items-center justify-center mt-0.5 flex-shrink-0 text-sm font-bold">
                 1
@@ -619,7 +608,7 @@ function App() {
     <div className="min-h-screen bg-[#222831]">
       <BrowserRouter>
         <NavBar />
-        <div className="container py-12 max-w-6xl mx-auto px-6">
+        <div className="container py-6 sm:py-12 max-w-6xl mx-auto px-4 sm:px-6">
           {currentAccount ? (
             <PageTransition>
               <Routes>
