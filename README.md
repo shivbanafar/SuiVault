@@ -2,6 +2,11 @@
 
 A decentralized enterprise document management platform built on Sui blockchain that enables secure storage and sharing of sensitive documents with blockchain-based access control.
 
+## Live Demo
+Try out SuiVault at: [https://sui-vault-five.vercel.app/](https://sui-vault-five.vercel.app/)
+
+> **Note**: This is a Testnet demo. Please connect your wallet to Testnet and request balance from [faucet.sui.io](https://faucet.sui.io/).
+
 ## Features
 
 ### Allowlist-Based Access
