@@ -407,7 +407,10 @@ const WalrusUpload: React.FC<WalrusUploadProps> = ({ policyObject, cap_id, modul
     setInfo(null);
   }, [uploadState]);
 
-  // Handle file upload
+  // Add new state for tracking upload progress
+  const [uploadProgress, setUploadProgress] = useState<number>(0);
+
+  // Update handleUpload function to track progress
   const handleUpload = useCallback(async () => {
     if (!fileData) return;
     
@@ -419,38 +422,78 @@ const WalrusUpload: React.FC<WalrusUploadProps> = ({ policyObject, cap_id, modul
     
     try {
       const reader = new FileReader();
+      
+      // Track file reading progress
+      reader.onprogress = (event) => {
+        if (event.lengthComputable) {
+          const progress = (event.loaded / event.total) * 50; // First 50% for reading
+          setUploadProgress(progress);
+          setUploadState(prev => ({
+            ...prev,
+            progress: progress
+          }));
+        }
+      };
+
       reader.onload = async function (event) {
         if (event.target && event.target.result) {
           const result = event.target.result;
           if (result instanceof ArrayBuffer) {
-      // Generate nonce for encryption
-      const nonce = crypto.getRandomValues(new Uint8Array(5));
-      const policyObjectBytes = fromHex(policyObject);
-      const id = toHex(new Uint8Array([...policyObjectBytes, ...nonce]));
-      
-      // Encrypt file
-      const { encryptedObject: encryptedBytes } = await client.encrypt({
-        threshold: 2,
-        packageId,
-        id,
+            // Update progress to 50% when starting encryption
+            setUploadProgress(50);
+            setUploadState(prev => ({
+              ...prev,
+              progress: 50
+            }));
+
+            // Generate nonce for encryption
+            const nonce = crypto.getRandomValues(new Uint8Array(5));
+            const policyObjectBytes = fromHex(policyObject);
+            const id = toHex(new Uint8Array([...policyObjectBytes, ...nonce]));
+            
+            // Encrypt file
+            const { encryptedObject: encryptedBytes } = await client.encrypt({
+              threshold: 2,
+              packageId,
+              id,
               data: new Uint8Array(result),
-      });
-      
+            });
+
+            // Update progress to 75% when starting storage
+            setUploadProgress(75);
+            setUploadState(prev => ({
+              ...prev,
+              progress: 75
+            }));
+            
             // Store blob
             const storageInfo = await storeBlob(encryptedBytes);
             displayUpload(storageInfo.info, fileData.file.type);
       
-      setUploadState({
-        isUploading: false,
-        progress: 100,
-        isComplete: true,
-        isError: false,
-        errorMessage: '',
-        blobId: id
-      });
+            // Complete upload
+            setUploadProgress(100);
+            setUploadState({
+              isUploading: false,
+              progress: 100,
+              isComplete: true,
+              isError: false,
+              errorMessage: '',
+              blobId: id
+            });
           }
         }
       };
+
+      reader.onerror = () => {
+        setUploadState({
+          isUploading: false,
+          progress: 0,
+          isComplete: false,
+          isError: true,
+          errorMessage: 'Failed to read file'
+        });
+      };
+
       reader.readAsArrayBuffer(fileData.file);
       
     } catch (error) {
@@ -766,102 +809,107 @@ const WalrusUpload: React.FC<WalrusUploadProps> = ({ policyObject, cap_id, modul
 
   // Render upload step
   const renderUploadStep = () => (
-    <div className="space-y-6 bg-[#222831]/80 rounded-lg border border-[#393E46] p-8">
+    <div className="space-y-6 bg-gradient-to-br from-[#222831] via-[#222831]/95 to-[#222831]/90 rounded-xl p-8">
       <div className="flex items-center gap-4">
         <div className="bg-[#00ADB5]/20 p-3 rounded-lg">
           <UploadCloudIcon className="w-6 h-6 text-[#00ADB5]" />
-      </div>
+        </div>
         <div>
           <h3 className="text-lg font-medium text-[#EEEEEE]">Upload Encrypted Files</h3>
           <p className="text-[#EEEEEE]/70 text-sm mt-1">Secure your files with blockchain-based encryption</p>
+        </div>
+      </div>
+
+      <div className="bg-[#222831]/50 backdrop-blur-sm rounded-xl p-6 relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-r from-[#00ADB5]/5 via-[#00ADB5]/10 to-[#00ADB5]/5 opacity-50" />
+        <div className="relative z-10">
+          <div className="flex items-center gap-4 mb-6">
+            <span className="text-[#EEEEEE]">Select Walrus service:</span>
+            <select
+              value={selectedService}
+              onChange={(e) => setSelectedService(e.target.value)}
+              className="bg-[#222831] border border-[#393E46] rounded-lg px-4 py-2 text-[#EEEEEE] focus:outline-none focus:border-[#00ADB5]"
+            >
+              {services.map((service) => (
+                <option key={service.id} value={service.id}>
+                  {service.name}
+                </option>
+              ))}
+            </select>
           </div>
-        </div>
 
-      <div className="bg-[#222831]/50 backdrop-blur-sm rounded-xl p-6 border border-[#393E46]">
-        <div className="flex items-center gap-4 mb-6">
-          <span className="text-[#EEEEEE]">Select Walrus service:</span>
-          <select
-            value={selectedService}
-            onChange={(e) => setSelectedService(e.target.value)}
-            className="bg-[#222831] border border-[#393E46] rounded-lg px-4 py-2 text-[#EEEEEE] focus:outline-none focus:border-[#00ADB5]"
-          >
-            {services.map((service) => (
-              <option key={service.id} value={service.id}>
-                {service.name}
-              </option>
-            ))}
-          </select>
-        </div>
-
-      {!fileData ? (
-        <div 
-            className="relative group cursor-pointer"
-            onClick={() => document.getElementById('fileInput')?.click()}
-        >
-            <div className="border-2 border-dashed border-[#393E46] rounded-xl p-12 transition-all duration-300 group-hover:border-[#00ADB5] bg-[#222831]/50 backdrop-blur-sm">
-          <input
-            type="file"
-                id="fileInput"
-            className="hidden"
-            onChange={handleFileChange}
-                accept=".pdf,.doc,.docx,.xls,.xlsx,.txt,.csv,.md,.js,.ts,.jsx,.tsx,.py,.java,.cpp,.c,.h,.html,.css,.json,.xml,.zip,.rar,.7z,.tar,.gz,image/*"
-              />
-              <div className="relative z-10">
-                <div className="bg-[#00ADB5]/10 w-20 h-20 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:bg-[#00ADB5]/20 transition-all duration-300">
-                  <UploadCloudIcon className="w-10 h-10 text-[#00ADB5]" />
+          {!fileData ? (
+            <div 
+              className="relative group cursor-pointer"
+              onClick={() => document.getElementById('fileInput')?.click()}
+            >
+              <div className="border-2 border-dashed border-[#393E46] rounded-xl p-12 transition-all duration-300 group-hover:border-[#00ADB5] bg-[#222831]/50 backdrop-blur-sm">
+                <input
+                  type="file"
+                  id="fileInput"
+                  className="hidden"
+                  onChange={handleFileChange}
+                  accept=".pdf,.doc,.docx,.xls,.xlsx,.txt,.csv,.md,.js,.ts,.jsx,.tsx,.py,.java,.cpp,.c,.h,.html,.css,.json,.xml,.zip,.rar,.7z,.tar,.gz,image/*"
+                />
+                <div className="relative z-10">
+                  <div className="bg-[#00ADB5]/10 w-20 h-20 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:bg-[#00ADB5]/20 transition-all duration-300">
+                    <UploadCloudIcon className="w-10 h-10 text-[#00ADB5]" />
+                  </div>
+                  <p className="text-[#EEEEEE] text-xl mb-3 font-medium">Drop your file here, or <span className="text-[#00ADB5] hover:text-[#00ADB5]/80 transition-colors">browse</span></p>
+                  <p className="text-[#EEEEEE]/70 text-sm mb-8">
+                    Supported files: PDF, Word, Excel, Images, Text, Code files, Archives (up to 50MB)
+                  </p>
                 </div>
-                <p className="text-[#EEEEEE] text-xl mb-3 font-medium">Drop your file here, or <span className="text-[#00ADB5] hover:text-[#00ADB5]/80 transition-colors">browse</span></p>
-                <p className="text-[#EEEEEE]/70 text-sm mb-8">
-                  Supported files: PDF, Word, Excel, Images, Text, Code files, Archives (up to 50MB)
-                </p>
               </div>
+              
+              <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-[#00ADB5]/0 via-[#00ADB5]/20 to-[#00ADB5]/0 opacity-0 group-hover:opacity-100 blur-xl transition-opacity duration-500" />
             </div>
-            
-            <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-[#00ADB5]/0 via-[#00ADB5]/20 to-[#00ADB5]/0 opacity-0 group-hover:opacity-100 blur-xl transition-opacity duration-500" />
-        </div>
-      ) : (
-          <div className="bg-[#222831]/50 backdrop-blur-sm rounded-xl p-6 border border-[#393E46] relative group hover:border-[#00ADB5] transition-all duration-300">
-            <div className="flex items-center gap-6">
-              <div className="bg-[#393E46]/50 w-20 h-20 rounded-xl flex items-center justify-center p-4">
-            {fileData.preview ? (
-                  <img src={fileData.preview} alt="Preview" className="w-full h-full object-cover rounded-lg" />
-            ) : (
-                  getFileTypeIcon(fileData.type)
-                )}
-              </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-[#EEEEEE] font-medium text-lg mb-2 truncate">{fileData.file.name}</p>
-                <div className="flex items-center gap-3 flex-wrap">
-                  <span className="bg-[#00ADB5]/20 px-3 py-1.5 rounded-lg text-[#00ADB5] text-sm font-medium">
-                    {getFileSize(fileData.file.size)}
-                  </span>
-                  <span className="text-[#EEEEEE]/30">•</span>
-                  <span className="text-[#EEEEEE]/70 text-sm capitalize">{fileData.type} file</span>
-                  {uploadState.isUploading && (
-                    <>
-                      <span className="text-[#EEEEEE]/30">•</span>
-                      <span className="text-[#00ADB5] text-sm font-medium">Uploading...</span>
-                    </>
-                  )}
+          ) : (
+            <div className="bg-[#222831]/50 backdrop-blur-sm rounded-xl p-6 relative group hover:border-[#00ADB5] transition-all duration-300">
+              <div className="absolute inset-0 bg-gradient-to-r from-[#00ADB5]/5 via-[#00ADB5]/10 to-[#00ADB5]/5 opacity-50 rounded-xl" />
+              <div className="relative z-10">
+                <div className="flex items-center gap-6">
+                  <div className="bg-[#393E46]/50 w-20 h-20 rounded-xl flex items-center justify-center p-4">
+                    {fileData.preview ? (
+                      <img src={fileData.preview} alt="Preview" className="w-full h-full object-cover rounded-lg" />
+                    ) : (
+                      getFileTypeIcon(fileData.type)
+                    )}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-[#EEEEEE] font-medium text-lg mb-2 truncate">{fileData.file.name}</p>
+                    <div className="flex items-center gap-3 flex-wrap">
+                      <span className="bg-[#00ADB5]/20 px-3 py-1.5 rounded-lg text-[#00ADB5] text-sm font-medium">
+                        {getFileSize(fileData.file.size)}
+                      </span>
+                      <span className="text-[#EEEEEE]/70 text-sm capitalize">{fileData.type} file</span>
+                      {uploadState.isUploading && (
+                        <span className="text-[#00ADB5] text-sm font-medium">Uploading...</span>
+                      )}
+                    </div>
+                  </div>
+                  <button 
+                    onClick={() => setFileData(null)}
+                    className="text-[#EEEEEE]/70 hover:text-[#00ADB5] p-2.5 rounded-lg hover:bg-[#393E46]/30 transition-all duration-300"
+                  >
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </button>
                 </div>
               </div>
-                <button 
-                  onClick={() => setFileData(null)}
-                className="text-[#EEEEEE]/70 hover:text-[#00ADB5] p-2.5 rounded-lg hover:bg-[#393E46]/30 transition-all duration-300"
-                >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
-                </svg>
-                </button>
-          </div>
-          
-          {uploadState.isUploading && (
-              <div className="absolute bottom-0 left-0 right-0 h-1 bg-[#393E46]/30 rounded-b-xl overflow-hidden">
-                <div className="h-full bg-[#00ADB5] transition-all duration-300 animate-pulse" />
-              </div>
-            )}
+              
+              {uploadState.isUploading && (
+                <div className="absolute bottom-0 left-0 right-0 h-1 bg-[#393E46]/30 rounded-b-xl overflow-hidden">
+                  <div 
+                    className="h-full bg-[#00ADB5] transition-all duration-300 ease-out"
+                    style={{ width: `${uploadProgress}%` }}
+                  />
+                </div>
+              )}
             </div>
           )}
+        </div>
       </div>
           
       {uploadState.isError && (
@@ -919,7 +967,9 @@ const WalrusUpload: React.FC<WalrusUploadProps> = ({ policyObject, cap_id, modul
           {uploadState.isUploading ? (
             <>
               <Spinner className="w-5 h-5" />
-              Uploading to Walrus...
+              {uploadProgress < 50 ? 'Reading file...' :
+               uploadProgress < 75 ? 'Encrypting...' :
+               uploadProgress < 100 ? 'Uploading...' : 'Finalizing...'}
             </>
           ) : (
             <>

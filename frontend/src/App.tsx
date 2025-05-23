@@ -57,15 +57,28 @@ function SealLogo() {
       initial="initial"
       whileHover="hover"
       whileTap="tap"
-      className="flex items-center gap-3"
+      className="flex items-center gap-2.5"
     >
       <motion.div
         variants={iconHover}
         whileHover="hover"
+        className="flex items-center bg-[#00ADB5]/10 p-2 rounded-xl"
       >
-        <LockIcon className="w-8 h-8 text-[#00ADB5]" />
+        <svg 
+          className="w-6 h-6 sm:w-7 sm:h-7 text-[#00ADB5]" 
+          xmlns="http://www.w3.org/2000/svg" 
+          viewBox="0 0 24 24" 
+          fill="none" 
+          stroke="currentColor" 
+          strokeWidth="1.5" 
+          strokeLinecap="round" 
+          strokeLinejoin="round"
+        >
+          <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+          <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+        </svg>
       </motion.div>
-      <span className="font-bold text-2xl text-[#EEEEEE]">SuiVault</span>
+      <span className="font-bold text-xl sm:text-2xl text-[#EEEEEE] leading-none">SuiVault</span>
     </motion.div>
   );
 }
@@ -96,15 +109,16 @@ function NavBar() {
   const [activeTab, setActiveTab] = useState("home");
 
   useEffect(() => {
-    if (location.pathname.includes("allowlist-example")) {
+    const path = location.pathname;
+    if (path.includes("allowlist-example")) {
       setActiveTab("allowlist");
-    } else if (location.pathname.includes("subscription-example")) {
+    } else if (path.includes("subscription-example")) {
       setActiveTab("subscription");
-    } else if (location.pathname.includes("chat")) {
-      setActiveTab("chat");
-    } else if (location.pathname.includes("about")) {
+    } else if (path === "/chat") {
+      setActiveTab("assistant");
+    } else if (path.includes("about")) {
       setActiveTab("about");
-    } else {
+    } else if (path === "/") {
       setActiveTab("home");
     }
   }, [location]);
@@ -138,7 +152,7 @@ function NavBar() {
                 <Button
                   variant="ghost"
                   onClick={() => navigate(item.path)}
-                  className={`flex items-center px-4 sm:px-6 py-2 rounded-lg sm:rounded-none border-b-2 transition-all duration-300 h-auto sm:h-20 text-sm sm:text-base w-full sm:w-auto ${
+                  className={`group flex items-center px-4 sm:px-6 py-2 rounded-lg sm:rounded-none border-b-2 transition-all duration-300 h-auto sm:h-20 text-sm sm:text-base w-full sm:w-auto ${
                     activeTab === item.label.toLowerCase()
                       ? "font-bold border-[#00ADB5] text-[#00ADB5] bg-[#393E46]"
                       : "font-normal border-transparent text-[#EEEEEE] hover:text-[#00ADB5] hover:bg-[#393E46]/50"
@@ -147,14 +161,19 @@ function NavBar() {
                   <motion.div
                     variants={iconHover}
                     whileHover="hover"
+                    className={`transition-colors duration-300 ${
+                      activeTab === item.label.toLowerCase()
+                        ? "text-[#00ADB5]"
+                        : "text-[#EEEEEE] group-hover:text-[#00ADB5]"
+                    }`}
                   >
                     <item.icon
-                      className={`w-4 h-4 sm:w-5 sm:h-5 mr-2 transition-colors duration-300 ${
+                      className={`w-5 h-5 sm:w-6 sm:h-6 mr-2.5 stroke-[1.75] ${
                         activeTab === item.label.toLowerCase()
-                          ? "fill-[#00ADB5] stroke-[#00ADB5]"
-                          : "stroke-[#EEEEEE]"
-                      }`}
-                      fill={activeTab === item.label.toLowerCase() ? "currentColor" : "none"}
+                          ? "text-[#00ADB5] stroke-[#00ADB5] scale-110"
+                          : "text-[#EEEEEE] stroke-current group-hover:text-[#00ADB5] group-hover:stroke-[#00ADB5] group-hover:scale-105"
+                      } transition-all duration-200`}
+                      fill="none"
                     />
                   </motion.div>
                   <span>{item.label}</span>
@@ -567,7 +586,18 @@ function LandingPage() {
               </div>
               <div className="text-[#EEEEEE] space-y-1">
                 <p>
-                  The source code is available on GitHub.
+                  The source code is available on{" "}
+                  <a
+                    href="https://github.com/shivbanafar/SuiVault"
+                    className="text-[#00ADB5] underline hover:text-[#00ADB5]/80 font-medium inline-flex items-center gap-1.5"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                    </svg>
+                    GitHub
+                  </a>
                 </p>
               </div>
             </li>
@@ -618,6 +648,7 @@ function App() {
                     initial="hidden"
                     animate="visible"
                     exit="exit"
+                    className="mt-0 sm:mt-0"
                   >
                     <LandingPage />
                   </motion.div>
@@ -745,17 +776,12 @@ function App() {
                                     />
                                   </motion.div>
                                   <motion.div variants={staggerItem}>
-                                    <div className="bg-[#222831]/80 p-6 rounded-lg border border-[#393E46]">
-                                      <h3 className="text-lg font-medium text-[#EEEEEE] mb-4 flex items-center gap-2">
-                                        <UploadCloudIcon className="w-5 h-5 text-[#00ADB5]" />
-                                        Upload Encrypted Files
-                                      </h3>
-                                      <WalrusUpload
-                                        policyObject={recipientAllowlist}
-                                        cap_id={capId}
-                                        moduleName="allowlist"
-                                      />
-                                    </div>
+                                    <WalrusUpload
+                                      policyObject={recipientAllowlist}
+                                      cap_id={capId}
+                                      moduleName="allowlist"
+                                      suiAddress={currentAccount.address}
+                                    />
                                   </motion.div>
                                 </motion.div>
                               </CardContent>
@@ -799,7 +825,7 @@ function App() {
                             animate="visible"
                             exit="exit"
                           >
-                            <Card className="border border-[#393E46] bg-transparent">
+                            <Card >
                               <CardHeader>
                                 <motion.div
                                   variants={staggerContainer}
@@ -837,7 +863,7 @@ function App() {
                             animate="visible"
                             exit="exit"
                           >
-                            <Card className="border border-[#393E46] bg-transparent">
+                            <Card>
                               <CardHeader>
                                 <motion.div
                                   variants={staggerContainer}
@@ -869,17 +895,12 @@ function App() {
                                     />
                                   </motion.div>
                                   <motion.div variants={staggerItem}>
-                                    <div className="bg-[#222831]/80 p-6 rounded-lg border border-[#393E46]">
-                                      <h3 className="text-lg font-medium text-[#EEEEEE] mb-4 flex items-center gap-2">
-                                        <UploadCloudIcon className="w-5 h-5 text-[#00ADB5]" />
-                                        Upload Subscription Content
-                                      </h3>
-                                      <WalrusUpload
-                                        policyObject={recipientAllowlist}
-                                        cap_id={capId}
-                                        moduleName="subscription"
-                                      />
-                                    </div>
+                                    <WalrusUpload
+                                      policyObject={recipientAllowlist}
+                                      cap_id={capId}
+                                      moduleName="subscription"
+                                      suiAddress={currentAccount.address}
+                                    />
                                   </motion.div>
                                 </motion.div>
                               </CardContent>
@@ -918,6 +939,7 @@ function App() {
               initial="hidden"
               animate="visible"
               exit="exit"
+              className="mt-0 sm:mt-0"
             >
               <Card className="max-w-md mx-auto mt-12 border border-[#393E46] bg-transparent">
                 <CardHeader className="text-center">
